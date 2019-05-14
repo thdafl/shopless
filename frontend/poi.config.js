@@ -3,6 +3,10 @@ module.exports = {
     'src/registerServiceWorker',
     'src/index'
   ],
+  devServer: {
+    https: true,
+    port: process.env.FRONTEND_PORT || 8080
+  },
   plugins: [
     {
       resolve: '@poi/plugin-eslint'

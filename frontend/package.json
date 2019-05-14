@@ -14,6 +14,8 @@
     "@types/poi": "^12.5.0",
     "@types/react": "^16.8.17",
     "@types/react-dom": "^16.8.4",
+    "@types/react-fontawesome": "^1.6.4",
+    "@types/socket.io-client": "^1.4.32",
     "eslint": "^5.9.0",
     "eslint-config-xo": "^0.25.0",
     "lerna": "^3.0.0-rc.0",
@@ -23,6 +25,8 @@
   },
   "dependencies": {
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "react-fontawesome": "^1.6.1",
+    "socket.io-client": "^2.2.0"
   }
 }
