@@ -66,10 +66,10 @@ function createServer() {
   return server
 }
 
-if (process.env.NODE_ENV === 'development') {
+if (true/*process.env.NODE_ENV === 'development'*/) {
   createServer().listen(PORT)
   console.log('> Backend listening at port', PORT)
-} else {
+}/* else {
   if (cluster.isMaster) {
     console.log(`Master started with pid ${process.pid}`)
   
@@ -87,4 +87,4 @@ if (process.env.NODE_ENV === 'development') {
     console.log(`Worker started with pid ${process.pid}`)
   }
   console.log('> Backend listening at port', PORT)
-}
+}(*/

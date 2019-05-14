@@ -3,7 +3,7 @@ import * as io from 'socket.io-client'
 import OAuth from './OAuth'
 import {API_URL} from './config'
 // import './App.css'
-const socket = io(API_URL)
+const socket = io(API_URL, {transports: ['websocket'], secure: true})
 const providers = ['google'/*, 'twitter', 'facebook', 'github'*/]
 
 function App() {
