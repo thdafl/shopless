@@ -43,7 +43,9 @@ const validator: ({required}: {required: boolean}) => express.RequestHandler =
           }
       })
     } else {
+      if (required) {
         res.sendStatus(403);
+      }
     }
   };
 
