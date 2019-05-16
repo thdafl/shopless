@@ -2,38 +2,47 @@
 import express from 'express'
 import passport from 'passport'
 
-import * as authController from '../controllers/auth'
+import * as auth from '../controllers/auth'
 
 const router = express.Router()
 
-// Setting up the passport middleware for each of the OAuth providers
-// const twitterAuth = passport.authenticate('twitter')
-const googleAuth = passport.authenticate('google', { scope: ['profile'] })
-// const facebookAuth = passport.authenticate('facebook')
-// const githubAuth = passport.authenticate('github')
+const authWith: (passport: (config: Partial<passport.AuthenticateOptions>) => any) => express.RequestHandler =
+  passport => (req, res, next) => {
+    const {returnTo} = req.query
+    const state = returnTo
+        ? Buffer.from(JSON.stringify({returnTo})).toString('base64') : undefined
+    passport({state})(req, res, next)
+  }
 
-// Routes that are triggered by the callbacks from each OAuth provider once 
-// the user has authenticated successfully
-// router.get('/twitter/callback', twitterAuth, authController.twitter)
-router.get('/google/callback', googleAuth, authController.google)
-// router.get('/facebook/callback', facebookAuth, authController.facebook)
-// router.get('/github/callback', githubAuth, authController.github)
+// Passport middlewares
+const googlePassport = (config: Partial<passport.AuthenticateOptions>) => passport.authenticate('google', {scope: [
+  "email",
+  "profile",
+  "https://www.googleapis.com/auth/drive",
+  "https://www.googleapis.com/auth/spreadsheets"
+], ...config})
+
+router.use(auth.optional)
 
 // This custom middleware allows us to attach the socket id to the session
 // With that socket id we can send back the right user info to the right 
 // socket
 router.use((req, res, next) => {
-  if (req.session) {
+  if (req.session && req.query.socketId) {
     req.session.socketId = req.query.socketId
   }
-  console.warn('session property is missing in request')
+  req.socketId = req.socketId || req.query.socketId
   next()
 })
 
+// OAuth success callback
+router.get('/google/callback', authWith(googlePassport), auth.success)
+
+router.get('/users', auth.required, (req, res) => {res.json({user: req.user})})
+
+router.get('/verify', auth.required)
+
 // Routes that are triggered on the client
-// router.get('/twitter', twitterAuth)
-router.get('/google', googleAuth)
-// router.get('/facebook', facebookAuth)
-// router.get('/github', githubAuth)
+router.get('/google', authWith(googlePassport))
 
 export default router

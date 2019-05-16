@@ -8,16 +8,28 @@ import fs from 'fs'
 import http from 'http'
 import https from 'https'
 import express from 'express'
+import cookieParser from 'cookie-parser'
+import bodyParser from 'body-parser'
 import session from 'express-session'
 import passport from 'passport'
 import cors from 'cors'
 import socketio from 'socket.io'
+import firebaseAdmin from 'firebase-admin'
 
 import {PORT, CLIENT_ORIGIN} from './config'
 import initPassport from './passport'
 import app from './app'
 
 import authRouter from './routers/auth'
+
+firebaseAdmin.initializeApp({
+  credential: firebaseAdmin.credential.cert(
+    process.env.FIREBASE_ADMIN_SERVICE_ACCOUNT ?
+      JSON.parse(process.env.FIREBASE_ADMIN_SERVICE_ACCOUNT) :
+      require('../firebase-service-account.json')
+  ),
+  databaseURL: "https://shopless-development.firebaseio.com"
+});
 
 function createServer() {
   let server: http.Server
@@ -34,22 +46,18 @@ function createServer() {
     }
     server = https.createServer(certOptions, app)
   }
-  
-  // Passport and JSON
-  app.use(express.json())
-  app.use(passport.initialize())
-  initPassport()
 
-  // CORS
-  app.use(cors({origin: CLIENT_ORIGIN}))
-  app.options('*', cors({origin: CLIENT_ORIGIN}))
+  app.use(express.json())
+  app.use(cookieParser())
+  app.use(bodyParser.urlencoded({ extended: false }));
+
 
   // Session
   if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
     throw new Error('SESSION_SECRET is missing!')
   }
   app.use(session({ 
-    secret: process.env.SESSION_SECRET || '', 
+    secret: process.env.SESSION_SECRET as string, 
     resave: true, 
     saveUninitialized: true
   }))
@@ -57,6 +65,15 @@ function createServer() {
   // Socket.io
   const io = socketio(server)
   app.set('io', io)
+
+  // Passport
+  app.use(passport.initialize())
+  app.use(passport.session())
+  initPassport()
+
+  // CORS
+  app.use(cors({origin: CLIENT_ORIGIN, credentials: true}))
+  app.options('*', cors({origin: CLIENT_ORIGIN, credentials: true}))
 
   // Wakeup
   app.get('/wake-up', (req, res) => res.send('👍'))

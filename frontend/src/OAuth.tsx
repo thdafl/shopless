@@ -1,4 +1,6 @@
 import * as React from 'react'
+import * as querystring from 'querystring'
+import axios from 'axios'
 import * as FontAwesome from 'react-fontawesome'
 
 import {API_URL} from './config'
@@ -24,11 +26,15 @@ export default class OAuth extends React.Component<OAuthProps, OAuthState> {
   componentDidMount() {
     const { socket, provider } = this.props
 
-    socket.on(provider, (user: any) => {
+    socket.on('jwt', async ({token}: {token: string}) => {
       if (this.popup) {
         this.popup.close()
       }
-      this.setState({user})
+
+      // console.log(await axios.get(`${API_URL}/users`, {headers: {authorization: `Bearer ${token}`}}))
+      console.log(await axios.get(`${API_URL}/users`, {withCredentials: true}))
+
+      // this.setState({user})
     })
   }
 
@@ -40,6 +46,16 @@ export default class OAuth extends React.Component<OAuthProps, OAuthState> {
       if (!popup || popup.closed || popup.closed === undefined) {
         clearInterval(check)
         this.setState({disabled: false})
+      } else {
+        try {
+          const {token} = querystring.parse(this.popup!.location.search.slice(1))
+          if (!token) {
+            return
+          }
+          clearInterval(check)
+          this.setState({disabled: false})
+          this.popup!.close()
+        } catch {}
       }
     }, 1000)
   }
