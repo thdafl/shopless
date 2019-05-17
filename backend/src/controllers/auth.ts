@@ -17,7 +17,7 @@ const validator: ({required}: {required: boolean}) => express.RequestHandler =
   ({required = false} = {required: false}) => (req, res, next) => {
     // Get auth header value
     const bearerHeader = req.headers['authorization'];
-    const token = bearerHeader ? bearerHeader.split(' ')[1] : req.cookies.token
+    const token = bearerHeader ? bearerHeader.split(' ')[1] : req.cookies['shopless-cookie']
     let valid = true
     if (token) {
         // Verify it
@@ -58,7 +58,7 @@ export const success = (req: Request, res: Response, next: NextFunction) => {
     if(err){
         res.sendStatus(500);
     } else {
-      res.cookie('token', token)
+      res.cookie('shopless-token', token)
       try {
         const {state} = req.query
         const {returnTo} = JSON.parse(Buffer.from(state, 'base64').toString())
@@ -67,6 +67,7 @@ export const success = (req: Request, res: Response, next: NextFunction) => {
         }
       } catch {
         if (req.session) {
+          console.log('already success', token)
           const io = req.app.get('io')
           io.in(req.session.socketId).emit('jwt', {token})
           res.redirect(url.format({query: {token}}))

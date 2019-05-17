@@ -16,14 +16,14 @@ import {
 export default () => {  
 
   // Allowing passport to serialize and deserialize users into sessions
-  passport.serializeUser<any, any>((user, cb) => cb(null, user.id))
-  passport.deserializeUser<any, any>((userId, cb) => {
-    const usersRef = firebaseAdmin.database().ref('users')
-    usersRef.orderByChild(`id`).equalTo(userId).once('value', snapshot => {
-      let [match] = Object.values(snapshot.val() || {})
-      return cb(null, match)
-    })
-  })
+  // passport.serializeUser<any, any>((user, cb) => cb(null, user.id))
+  // passport.deserializeUser<any, any>((userId, cb) => {
+  //   const usersRef = firebaseAdmin.database().ref('users')
+  //   usersRef.orderByChild(`id`).equalTo(userId).once('value', snapshot => {
+  //     let [match] = Object.values(snapshot.val() || {})
+  //     return cb(null, match)
+  //   })
+  // })
   
   // The callback that is invoked when an OAuth provider sends back user 
   // information. Normally, you would save the user to the database 

@@ -22,8 +22,6 @@ const googlePassport = (config: Partial<passport.AuthenticateOptions>) => passpo
   "https://www.googleapis.com/auth/spreadsheets"
 ], ...config})
 
-router.use(auth.optional)
-
 // This custom middleware allows us to attach the socket id to the session
 // With that socket id we can send back the right user info to the right 
 // socket

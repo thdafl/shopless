@@ -11,6 +11,7 @@ import express from 'express'
 import cookieParser from 'cookie-parser'
 import bodyParser from 'body-parser'
 import session from 'express-session'
+import createFileStore from 'session-file-store'
 import passport from 'passport'
 import cors from 'cors'
 import socketio from 'socket.io'
@@ -56,8 +57,13 @@ function createServer() {
   if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
     throw new Error('SESSION_SECRET is missing!')
   }
+  const FileStore = createFileStore(session)
   app.use(session({ 
-    secret: process.env.SESSION_SECRET as string, 
+    secret: process.env.SESSION_SECRET as string,
+    store: new FileStore({
+      path: './session-store'
+    }),
+    name: 'shopless-session',
     resave: true, 
     saveUninitialized: true
   }))
@@ -68,7 +74,7 @@ function createServer() {
 
   // Passport
   app.use(passport.initialize())
-  app.use(passport.session())
+  // app.use(passport.session())
   initPassport()
 
   // CORS
