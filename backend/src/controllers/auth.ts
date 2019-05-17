@@ -67,7 +67,6 @@ export const success = (req: Request, res: Response, next: NextFunction) => {
         }
       } catch {
         if (req.session) {
-          console.log('already success', token)
           const io = req.app.get('io')
           io.in(req.session.socketId).emit('jwt', {token})
           res.redirect(url.format({query: {token}}))

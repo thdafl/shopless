@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as querystring from 'querystring'
+import * as cookie from 'js-cookie'
 import axios from 'axios'
 import * as FontAwesome from 'react-fontawesome'
 
@@ -30,9 +31,10 @@ export default class OAuth extends React.Component<OAuthProps, OAuthState> {
       if (this.popup) {
         this.popup.close()
       }
+      cookie.set('shopless-token', token)
 
-      // console.log(await axios.get(`${API_URL}/users`, {headers: {authorization: `Bearer ${token}`}}))
-      console.log(await axios.get(`${API_URL}/users`, {withCredentials: true}))
+      console.log(await axios.get(`${API_URL}/users`, {headers: {authorization: `Bearer ${cookie.get('shopless-token')}`}}))
+      // console.log(await axios.get(`${API_URL}/users`, {withCredentials: true}))
 
       // this.setState({user})
     })
@@ -52,6 +54,7 @@ export default class OAuth extends React.Component<OAuthProps, OAuthState> {
           if (!token) {
             return
           }
+          cookie.set('shopless-token', token)
           clearInterval(check)
           this.setState({disabled: false})
           this.popup!.close()
