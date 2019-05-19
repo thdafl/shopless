@@ -1,10 +1,12 @@
 import * as React from 'react'
 import * as querystring from 'querystring'
 import * as cookie from 'js-cookie'
-import axios from 'axios'
-import * as FontAwesome from 'react-fontawesome'
+import {State} from 'react-reim'
+import {Button} from 'reakit'
 
 import {API_URL} from './config'
+import {loginWithToken} from './effects/auth'
+import auth$ from './stores/auth'
 
 export interface OAuthProps {
   socket: SocketIOClient.Socket,
@@ -12,7 +14,6 @@ export interface OAuthProps {
 }
 
 export interface OAuthState {
-  user: any,
   disabled: boolean
 }
 
@@ -20,23 +21,17 @@ export default class OAuth extends React.Component<OAuthProps, OAuthState> {
   popup: Window | null = null
   
   state: OAuthState = {
-    user: {},
     disabled: false
   }
 
-  componentDidMount() {
-    const { socket, provider } = this.props
+  async componentDidMount() {
+    const {socket} = this.props
 
     socket.on('jwt', async ({token}: {token: string}) => {
       if (this.popup) {
         this.popup.close()
       }
-      cookie.set('shopless-token', token)
-
-      console.log(await axios.get(`${API_URL}/users`, {headers: {authorization: `Bearer ${cookie.get('shopless-token')}`}}))
-      // console.log(await axios.get(`${API_URL}/users`, {withCredentials: true}))
-
-      // this.setState({user})
+      await loginWithToken(token)
     })
   }
 
@@ -92,41 +87,41 @@ export default class OAuth extends React.Component<OAuthProps, OAuthState> {
     }
   }
 
-  closeCard() {
-    this.setState({user: {}})
-  }
+  closeCard() {}
 
   render() {
-    const { name, photo} = this.state.user
     const { provider } = this.props
     const { disabled } = this.state
     
     return (
       <div>
-        {name
-          ? <div className={'card'}>              
-              <img src={photo} alt={name} />
-              {/* <FontAwesome
-                name={'times-circle'}
-                className={'close'}
-                onClick={this.closeCard.bind(this)}
-              /> */}
-              <button onClick={this.closeCard.bind(this)}>Close</button>
-              <h4>{name}</h4>
-            </div>
-          : <div className={'button-wrapper fadein-fast'}>
-              <button 
-                onClick={this.startAuth.bind(this)} 
-                className={`${provider} ${disabled ? 'disabled' : ''} button`}
-                style={{width: 100, height: 100}}
-              >
-                {provider}
-                {/* <FontAwesome
-                  name={provider}
-                /> */}
-              </button>
-            </div>
-        }
+        <State store={auth$} filter={s => (s.user ? s.user[provider] : null)}>
+          {profile =>
+            profile
+              ? <div className={'card'}>              
+                  <img src={profile.photos[0].value} alt={profile.displayName} />
+                  {/* <FontAwesome
+                    name={'times-circle'}
+                    className={'close'}
+                    onClick={this.closeCard.bind(this)}
+                  /> */}
+                  <button onClick={this.closeCard.bind(this)}>Close</button>
+                  <h4>{profile.displayName}</h4>
+                </div>
+              : <div className={'button-wrapper fadein-fast'}>
+                  <Button
+                    onClick={this.startAuth.bind(this)} 
+                    className={`${provider} ${disabled ? 'disabled' : ''} button`}
+                    style={{width: 100, height: 100}}
+                  >
+                    {provider}
+                    {/* <FontAwesome
+                      name={provider}
+                    /> */}
+                  </Button>
+                </div>
+          }
+        </State>
       </div>
     )
   }

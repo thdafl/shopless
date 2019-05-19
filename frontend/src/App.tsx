@@ -1,22 +1,20 @@
 import * as React from 'react'
-import * as io from 'socket.io-client'
-import OAuth from './OAuth'
-import {API_URL} from './config'
-// import './App.css'
-const socket = io(API_URL, {transports: ['websocket'], secure: true})
-const providers = ['google'/*, 'twitter', 'facebook', 'github'*/]
+import {Switch, Route} from 'react-router-dom'
+import {Button} from 'reakit'
+
+import Login from './pages/Login'
+import {init as initAuth, logout} from './effects/auth';
 
 function App() {
+  React.useEffect(() => {initAuth()}, [])
+  
   return (
     <div className={'wrapper'}>
       <div className={'container'}>
-        {providers.map(provider => 
-          <OAuth 
-            provider={provider}
-            key={provider}
-            socket={socket}
-          />
-        )}
+        <Button onClick={logout}>Logout</Button>
+        <Switch>
+          <Route path="/login" component={Login}/>
+        </Switch>
       </div>
     </div>
   )
