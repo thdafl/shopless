@@ -14,6 +14,8 @@
 
 2. `yarn && yarn dev`
 
+3. Trust local ssl: chrome://flags/#allow-insecure-localhost
+
 ## Deploy
 
 1. Prepare netlify for frontend and heroku for backend
