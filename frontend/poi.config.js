@@ -7,6 +7,10 @@ module.exports = {
     https: true,
     port: process.env.FRONTEND_PORT || 8080
   },
+  envs: {
+    API_URL: 'https://localhost:8081',
+    ...require('dotenv').config().parsed
+  },
   plugins: [
     {
       resolve: '@poi/plugin-eslint'

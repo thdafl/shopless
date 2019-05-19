@@ -14,8 +14,8 @@ const callbacks = providers.map(provider => {
 const [twitterURL, googleURL, facebookURL, githubURL] = callbacks
 
 export const CLIENT_ORIGIN = process.env.NODE_ENV === 'production'
-  ? 'https://shopless.netlify.com'
-  : ['https://127.0.0.1:8080', 'https://localhost:8080']
+  ? process.env.CLIENT_URL
+  : [process.env.CLIENT_URL, 'https://127.0.0.1:8080', 'https://localhost:8080'].filter(Boolean)
 
 export const TWITTER_CONFIG: IStrategyOptionWithRequest = {
   consumerKey: process.env.TWITTER_KEY as string,

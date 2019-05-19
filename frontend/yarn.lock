@@ -4034,6 +4034,11 @@ dotenv@^6.1.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
+dotenv@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.0.0.tgz#ed310c165b4e8a97bb745b0a9d99c31bda566440"
+  integrity sha512-30xVGqjLjiUOArT4+M5q9sYdvuR4riM6yK9wMcas9Vbp6zZa+ocC9dp6QoftuhTPhFAiLK/0C5Ni2nou/Bk8lg==
+
 duplexer@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/duplexer/-/duplexer-0.1.1.tgz#ace6ff808c1ce66b57d1ebf97977acb02334cfc1"
@@ -8327,10 +8332,10 @@ react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
   integrity sha512-aUk3bHfZ2bRSVFFbbeVS4i+lNPZr3/WM5jT2J5omUVV1zzcs1nAaf3l51ctA5FFvCRbhrH0bdAsRRQddFJZPtA==
 
-react-reim@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/react-reim/-/react-reim-2.1.0.tgz#3d9f3fed1a8eb206a4577e24d1cd1b06057823df"
-  integrity sha512-evEyqZBpuhWMrrSjrQNrUcRoGD1y2NDEOiBdybZZAB0MWeZNHRaVUbpmb8A8GEjLkdTVfP1bXtoXItvv7+g/Vg==
+react-reim@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/react-reim/-/react-reim-2.1.1.tgz#b37ea66a292da78780c31e81bf76b9f718126658"
+  integrity sha512-a/mS6PLecT510CNKjtpDt9eH5nejsW+Yy7OKV3RQvfW3b+P1lyyHdmNDHQ2x4fsNMw20i/P8ZKO53BEMKpIXCQ==
   dependencies:
     "@types/react" "^16.4.14"
     lodash "^4.17.10"
@@ -8586,10 +8591,10 @@ regjsparser@^0.6.0:
   dependencies:
     jsesc "~0.5.0"
 
-reim@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/reim/-/reim-2.1.0.tgz#4609445eca78868ce69a5c8cb4386e74967afb41"
-  integrity sha512-8Zt7RzBMv9vWMlXu/d59obpfYru8T3dYirt2rRgxNSK6GWB9laYdiwOKBh7Sc0PCc2V83MNnP/EVpXdUfYkCHA==
+reim@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/reim/-/reim-2.1.1.tgz#85defa1b4ac4b4dc726064bb0387e80fbd534ac8"
+  integrity sha512-xjGwyEdryhld/Pcg5RSs/Lt3v176a7xQdMpNSe2clluCrRfqIi7Vz/o/4sU1dZzNQK9J8/BHk2EwwRnuXY8nPQ==
   dependencies:
     auto-bind "^1.2.1"
     event-emitter "^0.3.5"

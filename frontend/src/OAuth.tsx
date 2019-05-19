@@ -4,7 +4,6 @@ import * as cookie from 'js-cookie'
 import {State} from 'react-reim'
 import {Button} from 'reakit'
 
-import {API_URL} from './config'
 import {loginWithToken} from './effects/auth'
 import auth$ from './stores/auth'
 
@@ -66,7 +65,7 @@ export default class OAuth extends React.Component<OAuthProps, OAuthState> {
     const width = 600, height = 600
     const left = (window.innerWidth / 2) - (width / 2)
     const top = (window.innerHeight / 2) - (height / 2)
-    const url = `${API_URL}/${provider}?socketId=${socket.id}`
+    const url = `${process.env.API_URL}/${provider}?socketId=${socket.id}`
 
     return window.open(url, '',       
       `toolbar=no, location=no, directories=no, status=no, menubar=no, 

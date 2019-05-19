@@ -9455,7 +9455,7 @@ react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
   integrity sha512-aUk3bHfZ2bRSVFFbbeVS4i+lNPZr3/WM5jT2J5omUVV1zzcs1nAaf3l51ctA5FFvCRbhrH0bdAsRRQddFJZPtA==
 
-react-reim@^2.1.0:
+react-reim@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/react-reim/-/react-reim-2.1.1.tgz#b37ea66a292da78780c31e81bf76b9f718126658"
   integrity sha512-a/mS6PLecT510CNKjtpDt9eH5nejsW+Yy7OKV3RQvfW3b+P1lyyHdmNDHQ2x4fsNMw20i/P8ZKO53BEMKpIXCQ==
@@ -9724,7 +9724,7 @@ regjsparser@^0.6.0:
   dependencies:
     jsesc "~0.5.0"
 
-reim@^2.1.0:
+reim@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/reim/-/reim-2.1.1.tgz#85defa1b4ac4b4dc726064bb0387e80fbd534ac8"
   integrity sha512-xjGwyEdryhld/Pcg5RSs/Lt3v176a7xQdMpNSe2clluCrRfqIi7Vz/o/4sU1dZzNQK9J8/BHk2EwwRnuXY8nPQ==
