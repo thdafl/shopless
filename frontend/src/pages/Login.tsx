@@ -1,11 +1,11 @@
 import * as React from 'react'
 import {useReim} from 'react-reim'
 import * as querystring from 'querystring'
+import {Redirect} from 'react-router'
 
 import auth$ from '../stores/auth'
 import {socket} from '../services/socket'
 import OAuth from '../OAuth'
-import {Redirect} from 'react-router'
 
 const providers = ['google'/*, 'twitter', 'facebook', 'github'*/]
 

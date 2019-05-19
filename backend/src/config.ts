@@ -14,8 +14,8 @@ const callbacks = providers.map(provider => {
 const [twitterURL, googleURL, facebookURL, githubURL] = callbacks
 
 export const CLIENT_ORIGIN = process.env.NODE_ENV === 'production'
-  ? process.env.CLIENT_URL
-  : [process.env.CLIENT_URL, 'https://127.0.0.1:8080', 'https://localhost:8080'].filter(Boolean)
+  ? process.env.CLIENT_URL as string
+  : [process.env.CLIENT_URL, 'https://127.0.0.1:8080', 'https://localhost:8080'].filter(Boolean) as string[]
 
 export const TWITTER_CONFIG: IStrategyOptionWithRequest = {
   consumerKey: process.env.TWITTER_KEY as string,
