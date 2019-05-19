@@ -3,3 +3,9 @@ dist
 .env
 firebase-service-account.json
 session-store
+.idea/
+.vscode/
+node_modules/
+tmp/
+temp/
+ormconfig.json
