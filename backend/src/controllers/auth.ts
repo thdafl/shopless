@@ -17,7 +17,7 @@ const validator: ({required}: {required: boolean}) => express.RequestHandler =
   ({required = false} = {required: false}) => (req, res, next) => {
     // Get auth header value
     const bearerHeader = req.headers['authorization'];
-    const token = bearerHeader ? bearerHeader.split(' ')[1] : req.cookies['shopless-cookie']
+    const token = bearerHeader ? bearerHeader.split(' ')[1] : req.cookies['shopless-token']
     let valid = true
     if (token) {
         // Verify it
