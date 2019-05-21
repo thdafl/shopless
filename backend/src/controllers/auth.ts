@@ -15,38 +15,7 @@ declare global {
 // check if Token exists on request Header and attach token to request as attribute
 const validator: ({required}: {required: boolean}) => express.RequestHandler = 
   ({required = false} = {required: false}) => (req, res, next) => {
-    // Get auth header value
-    const bearerHeader = req.headers['authorization'];
-    const token = bearerHeader ? bearerHeader.split(' ')[1] : req.cookies['shopless-token']
-    let valid = true
-    if (token) {
-        // Verify it
-        jwt.verify(token as string, process.env.SESSION_SECRET as string, async (err, authData) => {
-          if(err) {
-            console.error(err)
-            valid = false
-            if (required && !valid) {
-              res.sendStatus(403)
-            }
-            next()
-          } else {
-            const usersRef = firebaseAdmin.database().ref('users')
-            usersRef.orderByChild(`id`).equalTo((authData as any).userId).once('value', snapshot => {
-              req.token = token
-              req.user = Object.values(snapshot.val() || {})[0]
-              if (!req.user) valid = false;
-              if (required && !valid) {
-                res.sendStatus(403)
-              }
-              next()
-            })
-          }
-      })
-    } else {
-      if (required) {
-        res.sendStatus(403);
-      }
-    }
+    if(!!req.user) {next()}
   };
 
 // check if Token exists on request Header and attach token to request as attribute
@@ -66,6 +35,7 @@ export const success = (req: Request, res: Response, next: NextFunction) => {
             res.redirect(returnTo)
         }
       } catch {
+        // TODO: return a refresh token also
         if (req.session) {
           const io = req.app.get('io')
           io.in(req.session.socketId).emit('jwt', {token})

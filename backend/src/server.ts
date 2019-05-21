@@ -9,23 +9,11 @@ import http from 'http'
 import https from 'https'
 import "reflect-metadata";
 import {createConnection, Connection, ConnectionOptions} from "typeorm";
-
-import express from 'express'
-import cookieParser from 'cookie-parser'
-import bodyParser from 'body-parser'
-import session from 'express-session'
-import createFileStore from 'session-file-store'
-import passport from 'passport'
-import cors from 'cors'
 import socketio from 'socket.io'
 import firebaseAdmin from 'firebase-admin'
 
-import {PORT, CLIENT_ORIGIN} from './config'
-import initPassport from './passport'
-import {User} from "./entity/User"
-import app from './app'
-
-import authRouter from './routers/auth'
+import {PORT} from './config'
+import createApp from './app'
 
 firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(
@@ -54,8 +42,9 @@ createConnection(process.env.ORM_CONFIG ? JSON.parse(process.env.ORM_CONFIG) : r
     // const users = await connection.manager.find(User);
     // console.log("Loaded users: ", users);
 
-    function createServer() {
+    async function createServer() {
       let server: http.Server
+      const app = await createApp()
       
       if (process.env.NODE_ENV === 'production') {
         server = http.createServer(app)
@@ -67,52 +56,18 @@ createConnection(process.env.ORM_CONFIG ? JSON.parse(process.env.ORM_CONFIG) : r
           key: fs.readFileSync(path.resolve('local-certs/server.key')),
           cert: fs.readFileSync(path.resolve('local-certs/server.crt'))
         }
-        server = https.createServer(certOptions, app)
+        server = https.createServer(certOptions, await createApp())
       }
-    
-      app.use(express.json())
-      app.use(cookieParser())
-      app.use(bodyParser.urlencoded({ extended: false }));
-    
-    
-      // Session
-      if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
-        throw new Error('SESSION_SECRET is missing!')
-      }
-      const FileStore = createFileStore(session)
-      app.use(session({ 
-        secret: process.env.SESSION_SECRET as string,
-        store: new FileStore({
-          path: './session-store'
-        }),
-        name: 'shopless-session',
-        resave: true, 
-        saveUninitialized: true
-      }))
-    
+
       // Socket.io
       const io = socketio(server)
       app.set('io', io)
-    
-      // Passport
-      app.use(passport.initialize())
-      app.use(passport.session())
-      initPassport()
-    
-      // CORS
-      app.use(cors({origin: CLIENT_ORIGIN, credentials: true}))
-      app.options('*', cors({origin: CLIENT_ORIGIN, credentials: true}))
-    
-      // Wakeup
-      app.get('/wake-up', (req, res) => res.send('👍'))
-    
-      app.use('/', authRouter)
-    
+      
       return server
     }
     
     if (true/*process.env.NODE_ENV === 'development'*/) {
-      createServer().listen(PORT)
+      (await createServer()).listen(PORT)
       console.log('> Backend listening at port', PORT)
     }/* else {
       if (cluster.isMaster) {
