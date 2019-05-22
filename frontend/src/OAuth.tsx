@@ -48,10 +48,11 @@ export default class OAuth extends React.Component<OAuthProps, OAuthState> {
           if (!token) {
             return
           }
-          cookie.set('shopless-token', token)
+          cookie.set('shopless-token', token as string)
           clearInterval(check)
           this.setState({disabled: false})
           this.popup!.close()
+          loginWithToken(token as string)
         } catch {}
       }
     }, 1000)
@@ -65,7 +66,7 @@ export default class OAuth extends React.Component<OAuthProps, OAuthState> {
     const width = 600, height = 600
     const left = (window.innerWidth / 2) - (width / 2)
     const top = (window.innerHeight / 2) - (height / 2)
-    const url = `${process.env.API_URL}/${provider}?socketId=${socket.id}`
+    const url = `${process.env.API_URL}/${provider}?socketId=${socket.id}&returnTo=${encodeURI(location.origin + '/login')}`
 
     return window.open(url, '',       
       `toolbar=no, location=no, directories=no, status=no, menubar=no, 

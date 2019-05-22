@@ -7,16 +7,16 @@ export class Base {
     @PrimaryGeneratedColumn('uuid')
     @Field(type => ID)
     //@ts-ignore
-    id: number;
+    readonly id: string;
 
     @CreateDateColumn()
     @Field()
     //@ts-ignore
-    created_at: Date;
+    createdAt: Date;
 
 
     @UpdateDateColumn()
     @Field()
     //@ts-ignore
-    updated_at: Date;
+    updatedAt: Date;
 }

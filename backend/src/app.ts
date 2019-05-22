@@ -60,17 +60,17 @@ async function createApp() {
     }
 
     if (token) {
-        // Verify it
-        await new Promise((resolve) => {
-          jwt.verify(token as string, process.env.SESSION_SECRET as string, async (err, authData) => {
-            if (!err) {
-              const usersRef = firebaseAdmin.database().ref('users')
-              usersRef.orderByChild(`id`).equalTo((authData as any).userId).once('value', snapshot => {
-                req.token = token
-                req.user = Object.values(snapshot.val() || {})[0]
-                resolve()
-              })
-            }
+      // Verify it
+      await new Promise((resolve) => {
+        jwt.verify(token as string, process.env.SESSION_SECRET as string, async (err, authData) => {
+          if (!err) {
+            const usersRef = firebaseAdmin.database().ref('users')
+            usersRef.orderByChild(`id`).equalTo((authData as any).userId).once('value', snapshot => {
+              req.token = token
+              req.user = Object.values(snapshot.val() || {})[0]
+              resolve()
+            })
+          }
         })
       })
     }

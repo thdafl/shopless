@@ -1,4 +1,4 @@
-import url from 'url'
+import url, { URL } from 'url'
 import jwt from 'jsonwebtoken'
 import express, {Request, Response, NextFunction} from 'express'
 import firebaseAdmin from 'firebase-admin'
@@ -32,7 +32,9 @@ export const success = (req: Request, res: Response, next: NextFunction) => {
         const {state} = req.query
         const {returnTo} = JSON.parse(Buffer.from(state, 'base64').toString())
         if (typeof returnTo === 'string' && returnTo.startsWith('http')) {
-            res.redirect(returnTo)
+          const returnUrl = new URL(decodeURI(returnTo))
+          returnUrl.searchParams.append('token', token)
+          res.redirect(returnUrl.href)
         }
       } catch {
         // TODO: return a refresh token also
@@ -45,5 +47,5 @@ export const success = (req: Request, res: Response, next: NextFunction) => {
         res.json({token})
       }
     }
-});
+  })
 }

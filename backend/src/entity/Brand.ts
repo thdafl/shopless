@@ -1,6 +1,8 @@
-import {Entity, Column} from 'typeorm'
-import {ObjectType, Field} from 'type-graphql'
+import {Entity, Column, ManyToOne} from 'typeorm'
+import {ObjectType, Field, ID} from 'type-graphql'
 
+import {RelationColumn} from '../util/typeorm'
+import {User} from '../graphql/typeDefs'
 import {Base} from './Base'
 
 @Entity()
@@ -10,4 +12,12 @@ export class Brand extends Base {
     @Field()
     //@ts-ignore
     name: string;
+
+    @Field(type => User)
+    // @ManyToOne(type => User)
+    // @ts-ignore
+    author: User;
+    @RelationColumn({length: 30})
+    // @ts-ignore
+    authorId: string;
 }

@@ -8,7 +8,8 @@ import fs from 'fs'
 import http from 'http'
 import https from 'https'
 import "reflect-metadata";
-import {createConnection, Connection, ConnectionOptions} from "typeorm";
+import {createConnection, useContainer} from "typeorm";
+import {Container} from 'typedi'
 import socketio from 'socket.io'
 import firebaseAdmin from 'firebase-admin'
 
@@ -23,6 +24,8 @@ firebaseAdmin.initializeApp({
   ),
   databaseURL: "https://shopless-development.firebaseio.com"
 });
+
+useContainer(Container)
 
 createConnection(process.env.ORM_CONFIG ? JSON.parse(process.env.ORM_CONFIG) : require('../ormconfig.json')).then(async connection => {
     process.on('SIGTERM', () => {

@@ -2,21 +2,27 @@ import * as React from 'react'
 import {Switch, Route} from 'react-router-dom'
 import {Button} from 'reakit'
 
+import {init as initAuth, logout} from './effects/auth'
 import Login from './pages/Login'
-import {init as initAuth, logout} from './effects/auth';
+import Brand from './pages/Brand'
 
 function App() {
   React.useEffect(() => {initAuth()}, [])
   
   return (
-    <div className={'wrapper'}>
-      <div className={'container'}>
-        <Button onClick={logout}>Logout</Button>
-        <Switch>
-          <Route path="/login" component={Login}/>
-        </Switch>
-      </div>
-    </div>
+    <Switch>
+      <Route path="/login" component={Login}/>
+      <Route>
+        <div className={'wrapper'}>
+          <div className={'container'}>
+            <Button onClick={logout}>Logout</Button>
+            <Switch>
+              <Route path="/brands/:id?" component={Brand}/>
+            </Switch>
+          </div>
+        </div>
+      </Route>
+    </Switch>
   )
 }
 
