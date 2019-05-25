@@ -2,10 +2,10 @@ import * as React from 'react'
 import { RouteComponentProps } from 'react-router'
 import { useReim, State } from 'react-reim';
 import { Button } from 'reakit'
+import { Query, Mutation } from 'react-apollo';
 
 import apollo from '../services/apollo';
 import {CREATE_BRAND, RETRIEVE_BRAND} from '../graphql/brand'
-import { Query, Mutation } from 'react-apollo';
 
 function Brand({match}: RouteComponentProps<{id?: string}>) {
   const [brandName, {onChange}] = useReim('', {actions: {onChange: e => e.target.value}})
@@ -18,7 +18,7 @@ function Brand({match}: RouteComponentProps<{id?: string}>) {
             if (loading) return <div>Loading...</div>;
             if (error) return <p>ERROR</p>
             return (
-              <div>{JSON.stringify(brand)}</div>
+              <h1>{brand.name}</h1>
             )
           }}
         </Query>
