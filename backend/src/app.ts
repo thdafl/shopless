@@ -14,6 +14,7 @@ import createSchema from './graphql'
 import authRouter from './routers/auth'
 import { getRepository } from 'typeorm';
 import { User } from './entity';
+import { reject } from 'q';
 
 async function createApp() {
   const app = express()
@@ -55,7 +56,7 @@ async function createApp() {
       const referer = req.headers.referer
       if (referer && referer.endsWith('/graphql')) {
         token = await new Promise(resolve => {
-          jwt.sign({userId: 'n179aaKfUC0S2As8XqO8T'}, process.env.SESSION_SECRET as string, {expiresIn:'1 day'}, (err, token) => {resolve(token)})
+          jwt.sign({userId: 'c343b1e3-fc5a-4315-9f45-6017300c7ca9'}, process.env.SESSION_SECRET as string, {expiresIn:'1 day'}, (err, token) => {resolve(token)})
         })
       }
     }
@@ -65,8 +66,11 @@ async function createApp() {
       await new Promise((resolve) => {
         jwt.verify(token as string, process.env.SESSION_SECRET as string, async (err, authData) => {
           if (!err) {
-            resolve(await getRepository(User).findOne((authData as any).userId))
+            req.token = token
+            req.user = await getRepository(User).findOne((authData as any).userId)
+            resolve()
           }
+          reject(err)
         })
       })
     }

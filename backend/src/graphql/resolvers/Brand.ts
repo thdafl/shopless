@@ -1,10 +1,12 @@
 import {getRepository, Repository} from 'typeorm'
-import {Resolver, Query, Arg, Mutation, Ctx, Root, FieldResolver, Field} from 'type-graphql'
+import {Resolver, Query, Arg, Mutation, Ctx, Root, FieldResolver, Field, Args} from 'type-graphql'
 import {InjectRepository} from 'typeorm-typedi-extensions'
 
 import {Brand, User, Product} from '../typeDefs'
 import {BrandInput} from '../inputs/BrandInput'
 import { AuthenticationError } from 'apollo-server-core';
+import {PaginationArgs} from '../args/Pagination'
+import { paginate } from '../helper';
 
 @Resolver(of => Brand)
 export class BrandResolver {
@@ -38,7 +40,16 @@ export class BrandResolver {
   }
 
   @FieldResolver()
-  products(@Root() brand: Brand): Promise<Product[]> {
-    return this.productRepository.find({brandId: brand.id})
+  products(
+    @Root() brand: Brand,
+    @Args() pagination: PaginationArgs
+  ): Promise<Product[]> {
+    return paginate(
+      this.productRepository
+        .createQueryBuilder('products')
+        .where({brandId: brand.id}),
+      pagination
+    )
+    .getMany()
   }
 }

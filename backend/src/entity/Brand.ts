@@ -17,7 +17,7 @@ export class Brand extends Base {
     // @ManyToOne(type => User)
     // @ts-ignore
     author: User;
-    @RelationColumn({length: 30})
+    @RelationColumn()
     // @ts-ignore
     authorId: string;
 
