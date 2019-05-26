@@ -25,7 +25,7 @@ useContainer(Container)
 createConnection({
   ...{
     "type": "postgres",
-    "synchronize": process.env.NODE_ENV === 'development',
+    "synchronize": true/*process.env.NODE_ENV === 'development'*/,
     "logging": false,
     "entities": [
        "src/entity/**/*.ts"

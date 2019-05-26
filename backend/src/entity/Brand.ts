@@ -1,5 +1,6 @@
 import {Entity, Column, ManyToOne} from 'typeorm'
-import {ObjectType, Field, ID} from 'type-graphql'
+import {ObjectType, Field, ID, Authorized} from 'type-graphql'
+import {GraphQLJSON} from 'graphql-type-json'
 
 import {RelationColumn} from '../util/typeorm'
 import {User} from '../graphql/typeDefs'
@@ -20,4 +21,9 @@ export class Brand extends Base {
     @RelationColumn()
     // @ts-ignore
     authorId: string;
+
+    @Column({type: 'json', nullable: true})
+    @Field(type => GraphQLJSON)
+    // @ts-ignore
+    setting: object;
 }

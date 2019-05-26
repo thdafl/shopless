@@ -11,6 +11,7 @@
       "//start": "node ./dist/server.js"
    },
    "devDependencies": {
+      "@types/graphql-type-json": "^0.3.0",
       "ts-node-dev": "^1.0.0-pre.39"
    },
    "dependencies": {
@@ -44,6 +45,7 @@
       "express-session": "^1.16.1",
       "graphql": "^14.3.0",
       "graphql-tools": "^4.0.4",
+      "graphql-type-json": "^0.3.0",
       "jsonwebtoken": "^8.5.1",
       "mysql": "^2.14.1",
       "nanoid": "^2.0.1",
