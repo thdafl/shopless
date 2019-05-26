@@ -14,7 +14,6 @@ import createSchema from './graphql'
 import authRouter from './routers/auth'
 import { getRepository } from 'typeorm';
 import { User } from './entity';
-import { reject } from 'q';
 
 async function createApp() {
   const app = express()
@@ -63,7 +62,7 @@ async function createApp() {
 
     if (token) {
       // Verify it
-      await new Promise((resolve) => {
+      await new Promise((resolve, reject) => {
         jwt.verify(token as string, process.env.SESSION_SECRET as string, async (err, authData) => {
           if (!err) {
             req.token = token
