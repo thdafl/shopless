@@ -2,7 +2,7 @@ import {Entity, Column, ManyToOne} from 'typeorm'
 import {ObjectType, Field, ID} from 'type-graphql'
 
 import {RelationColumn} from '../util/typeorm'
-import {User, Product} from '../graphql/typeDefs'
+import {User} from '../graphql/typeDefs'
 import {Base} from './Base'
 
 @Entity()
@@ -20,8 +20,4 @@ export class Brand extends Base {
     @RelationColumn()
     // @ts-ignore
     authorId: string;
-
-    @Field(type => [Product])
-    // @ts-ignore
-    products: [Product]
 }

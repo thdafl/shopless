@@ -15,5 +15,5 @@ export class PaginationArgs {
 
   // helpers - index calculations
   get skip(): number {return this.offset};
-  get take(): number {return this.offset + this.limit};
+  get take(): number {return this.limit};
 }

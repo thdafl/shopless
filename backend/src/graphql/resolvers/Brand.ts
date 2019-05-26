@@ -1,13 +1,13 @@
 import {getRepository, Repository} from 'typeorm'
-import {Resolver, Query, Arg, Mutation, Ctx, Root, FieldResolver, Field, Args} from 'type-graphql'
+import {Resolver, Query, Arg, Mutation, Ctx, Root, FieldResolver, Field, Args, ObjectType} from 'type-graphql'
 import {InjectRepository} from 'typeorm-typedi-extensions'
 
 import {Brand, User, Product} from '../typeDefs'
 import {BrandInput} from '../inputs/BrandInput'
 import { AuthenticationError } from 'apollo-server-core';
 import {PaginationArgs} from '../args/Pagination'
-import { paginate } from '../helper';
-
+import { paginate, Paginated } from '../helper';
+import { PaginatedProducts } from '../responses/PaginatedProducts';
 @Resolver(of => Brand)
 export class BrandResolver {
   constructor(
@@ -39,17 +39,16 @@ export class BrandResolver {
     return this.userRepository.findOne(brand.authorId) as Promise<User>
   }
 
-  @FieldResolver()
+  @FieldResolver(returns => PaginatedProducts)
   products(
     @Root() brand: Brand,
     @Args() pagination: PaginationArgs
-  ): Promise<Product[]> {
+  ): Promise<PaginatedProducts> {
     return paginate(
       this.productRepository
-        .createQueryBuilder('products')
-        .where({brandId: brand.id}),
+      .createQueryBuilder('products')
+      .where({brandId: brand.id}),
       pagination
     )
-    .getMany()
   }
 }
