@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken'
-import firebaseAdmin from 'firebase-admin'
 import express from 'express'
 import cookieParser from 'cookie-parser'
 import bodyParser from 'body-parser'
@@ -13,6 +12,8 @@ import {PORT, CLIENT_ORIGIN} from './config'
 import initPassport from './passport'
 import createSchema from './graphql'
 import authRouter from './routers/auth'
+import { getRepository } from 'typeorm';
+import { User } from './entity';
 
 async function createApp() {
   const app = express()
@@ -64,12 +65,7 @@ async function createApp() {
       await new Promise((resolve) => {
         jwt.verify(token as string, process.env.SESSION_SECRET as string, async (err, authData) => {
           if (!err) {
-            const usersRef = firebaseAdmin.database().ref('users')
-            usersRef.orderByChild(`id`).equalTo((authData as any).userId).once('value', snapshot => {
-              req.token = token
-              req.user = Object.values(snapshot.val() || {})[0]
-              resolve()
-            })
+            resolve(await getRepository(User).findOne((authData as any).userId))
           }
         })
       })

@@ -1,18 +1,17 @@
 import {getRepository, Repository} from 'typeorm'
 import {Resolver, Query, Arg, Mutation, Ctx, Root, FieldResolver, Field} from 'type-graphql'
 import {InjectRepository} from 'typeorm-typedi-extensions'
-import firebaseAdmin from 'firebase-admin'
 
-import {Brand, User} from '../typeDefs'
+import {Brand, User, Product} from '../typeDefs'
 import {BrandInput} from '../inputs/BrandInput'
 import { AuthenticationError } from 'apollo-server-core';
-import { Product } from '../../entity';
 
 @Resolver(of => Brand)
 export class BrandResolver {
   constructor(
     @InjectRepository(Brand) private readonly brandRepository: Repository<Brand>,
     @InjectRepository(Product) private readonly productRepository: Repository<Product>,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
     ) {}
   
   @Query(returns => Brand, {nullable: true})
@@ -34,14 +33,8 @@ export class BrandResolver {
   }
 
   @FieldResolver()
-  author(@Root() brand: Brand): Promise<User> {
-    return new Promise((resolve) => {
-      const usersRef = firebaseAdmin.database().ref('users')
-      usersRef.orderByChild(`id`).equalTo(brand.authorId).once('value', snapshot => {
-        console.log(snapshot.val())
-        resolve(Object.values(snapshot.val() || {})[0] as User)
-      })
-    })
+  async author(@Root() brand: Brand): Promise<User> {
+    return this.userRepository.findOne(brand.authorId) as Promise<User>
   }
 
   @FieldResolver()

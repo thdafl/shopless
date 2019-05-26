@@ -6,8 +6,8 @@ import {User} from '../typeDefs'
 @Resolver(of => User)
 export class UserResolver {
   @Query(returns => User)
-  me(@Ctx('req') req: any) {
-    if (!req.user) throw new AuthenticationError('Not authenticated')
-    return req.user
+  me(@Ctx('req') {user}: any) {
+    if (!user) throw new AuthenticationError('Not authenticated')
+    return user
   }
 }

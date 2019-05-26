@@ -1,5 +1,8 @@
 // @ts-ignore
 require('dotenv').config()
+require('dotenv').config({path: require('path').resolve(process.cwd(), '../../.env.default')})
+require('dotenv').config({path: require('path').resolve(__dirname, '../../.env')})
+require('dotenv').config({path: require('path').resolve(__dirname, '../../.env.default')})
 
 import os from 'os'
 import cluster from 'cluster'
@@ -11,39 +14,46 @@ import "reflect-metadata";
 import {createConnection, useContainer} from "typeorm";
 import {Container} from 'typedi'
 import socketio from 'socket.io'
-import firebaseAdmin from 'firebase-admin'
 
 import {PORT} from './config'
 import createApp from './app'
 
-firebaseAdmin.initializeApp({
-  credential: firebaseAdmin.credential.cert(
-    process.env.FIREBASE_ADMIN_SERVICE_ACCOUNT ?
-      JSON.parse(process.env.FIREBASE_ADMIN_SERVICE_ACCOUNT) :
-      require('../firebase-service-account.json')
-  ),
-  databaseURL: "https://shopless-development.firebaseio.com"
-});
-
 useContainer(Container)
 
-createConnection(process.env.ORM_CONFIG ? JSON.parse(process.env.ORM_CONFIG) : require('../ormconfig.json')).then(async connection => {
+createConnection({
+  ...{
+    "type": "postgres",
+    "synchronize": true,
+    "logging": false,
+    "entities": [
+       "src/entity/**/*.ts"
+    ],
+    "migrations": [
+       "src/migration/**/*.ts"
+    ],
+    "subscribers": [
+       "src/subscriber/**/*.ts"
+    ],
+    "cli": {
+       "entitiesDir": "src/entity",
+       "migrationsDir": "src/migration",
+       "subscribersDir": "src/subscriber"
+    }
+  },
+  ...{
+    type: process.env.DB_TYPE,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE
+  },
+  ...(JSON.parse(process.env.ORM_CONFIG || process.env.DB_CONFIG || '{}'))
+}).then(async connection => {
     process.on('SIGTERM', () => {
       console.info('SIGTERM signal received.')
       return connection.close()
     });
-
-    // console.log("Inserting a new user into the database...");
-    // const user = new User();
-    // user.firstName = "Timber";
-    // user.lastName = "Saw";
-    // user.age = 25;
-    // await connection.manager.save(user);
-    // console.log("Saved a new user with id: " + user.id);
-
-    // console.log("Loading users from the database...");
-    // const users = await connection.manager.find(User);
-    // console.log("Loaded users: ", users);
 
     async function createServer() {
       let server: http.Server

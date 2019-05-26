@@ -1,7 +1,6 @@
 import url, { URL } from 'url'
 import jwt from 'jsonwebtoken'
 import express, {Request, Response, NextFunction} from 'express'
-import firebaseAdmin from 'firebase-admin'
 
 declare global {
   namespace Express {
