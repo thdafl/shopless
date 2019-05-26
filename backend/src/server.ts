@@ -18,6 +18,8 @@ import socketio from 'socket.io'
 import {PORT} from './config'
 import createApp from './app'
 
+const exitHook = require('async-exit-hook')
+
 useContainer(Container)
 
 createConnection({
@@ -50,10 +52,10 @@ createConnection({
   },
   ...(JSON.parse(process.env.ORM_CONFIG || process.env.DB_CONFIG || '{}'))
 }).then(async connection => {
-    process.on('SIGTERM', () => {
-      console.info('SIGTERM signal received.')
-      return connection.close()
-    });
+    exitHook(async (callback: any) => {
+      await connection.close()
+      callback()
+    })
 
     async function createServer() {
       let server: http.Server

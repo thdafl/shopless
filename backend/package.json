@@ -34,6 +34,7 @@
       "@types/session-file-store": "^1.2.0",
       "@types/socket.io": "^2.1.2",
       "apollo-server-express": "^2.5.0",
+      "async-exit-hook": "^2.0.1",
       "body-parser": "^1.19.0",
       "cluster": "^0.7.7",
       "cookie-parser": "^1.4.4",
