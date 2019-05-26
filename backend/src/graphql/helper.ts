@@ -6,7 +6,7 @@ export const paginate = async <TE, TP extends PaginationArgs>(
   builder: SelectQueryBuilder<TE>,
   options: TP,
   callback: (b: typeof builder) => typeof builder = b => b
-): Promise<any> => {
+): Promise<{total: number, items: TE[]} & TP> => {
   const [list, count] = await callback(builder.skip(options.skip).take(options.take)).getManyAndCount()
 
   return {

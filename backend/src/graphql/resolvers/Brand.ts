@@ -39,16 +39,16 @@ export class BrandResolver {
     return this.userRepository.findOne(brand.authorId) as Promise<User>
   }
 
-  @FieldResolver(returns => PaginatedProducts)
-  products(
+  @FieldResolver(returns => [Product])
+  async products(
     @Root() brand: Brand,
     @Args() pagination: PaginationArgs
-  ): Promise<PaginatedProducts> {
-    return paginate(
+  ): Promise<Product[]> {
+    return (await paginate(
       this.productRepository
       .createQueryBuilder('products')
       .where({brandId: brand.id}),
       pagination
-    )
+    )).items
   }
 }
