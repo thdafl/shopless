@@ -10,11 +10,11 @@ module.exports = {
     port: process.env.FRONTEND_PORT || 8080
   },
   envs: {
-    API_URL: process.env.API_URL || 'https://localhost:8081',
-    ...require('dotenv').config().parsed,
-    ...require('dotenv').config({path: path.resolve(process.cwd(), './.env.default')}).parsed,
+    ...require('dotenv').config({path: path.resolve(__dirname, '../.env.default')}).parsed,
     ...require('dotenv').config({path: path.resolve(__dirname, '../.env')}).parsed,
-    ...require('dotenv').config({path: path.resolve(__dirname, '../.env.default')}).parsed
+    ...require('dotenv').config({path: path.resolve(process.cwd(), './.env.default')}).parsed,
+    ...require('dotenv').config().parsed,
+    API_URL: process.env.API_URL || 'https://localhost:8081'
   },
   plugins: [
     {
