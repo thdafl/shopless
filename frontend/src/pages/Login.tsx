@@ -5,9 +5,81 @@ import {Redirect, RouteComponentProps} from 'react-router'
 
 import auth$ from '../stores/auth'
 import {socket} from '../services/socket'
+import instance from '../services/axios'
 import OAuth from '../OAuth'
 
 const providers = ['google'/*, 'twitter', 'facebook', 'github'*/]
+
+const LoginComponent = () => {
+	const [username, setUsername] = React.useState("")
+	const [password, setPassword] = React.useState("")
+	const [toggleLogin, setToggleLogin] = React.useState(true)
+
+	const loginFunction = (username: string, password: string): void => {
+		try {
+			instance.post('/local/login', {
+				username,
+				password
+			})
+				.then(res => alert(res.data.message))
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
+	const registerFunction = (username: string, password: string): void => {
+		try {
+			instance.post('/local/register', {
+				username,
+				password
+			})
+				.then(res => alert(res.data.message))
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
+	const verifyFunction = (): void => {
+		try {
+			instance.get('/verify')
+				.then(res => console.log(res))
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
+	return (
+		<React.Fragment>
+			<div>
+				{toggleLogin ? "Login" : "Register"}
+				<button onClick={() => setToggleLogin(!toggleLogin)}>{!toggleLogin ? "Login" : "Register"}</button>
+			</div>
+			{toggleLogin
+				?
+				(
+					<form
+						onSubmit={(e) => { loginFunction(username, password); e.preventDefault() }}
+					>
+						<input onChange={e => setUsername(e.target.value)} value={username} />
+						<input onChange={e => setPassword(e.target.value)} value={password} />
+						<button type='submit'>Login</button>
+					</form>
+				)
+				:
+				(
+					<form
+						onSubmit={(e) => { registerFunction(username, password); e.preventDefault() }}
+					>
+						<input onChange={e => setUsername(e.target.value)} value={username} />
+						<input onChange={e => setPassword(e.target.value)} value={password} />
+						<button type='submit'>Register</button>
+					</form>
+				)
+			}
+			<button onClick={verifyFunction}>Verify</button>
+		</React.Fragment>
+	)
+}
 
 function Login({location}: RouteComponentProps<{}>) {
   const [authenticated] = useReim(auth$, {filter: s => !!s.user})
@@ -25,7 +97,8 @@ function Login({location}: RouteComponentProps<{}>) {
               key={provider}
               socket={socket}
             />
-          )}
+					)}
+					<LoginComponent />
         </>
   )
 }

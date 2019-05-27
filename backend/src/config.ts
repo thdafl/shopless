@@ -1,5 +1,6 @@
 import {IStrategyOption, IStrategyOptionWithRequest} from 'passport-twitter'
 import { IOAuth2StrategyOption, IOAuth2StrategyOptionWithRequest } from 'passport-google-oauth';
+import { IStrategyOptionsWithRequest as LocalIStrategyOptionWithRequest} from 'passport-local'
 
 export const PORT = process.env.BACKEND_PORT || process.env.PORT || 8081
 
@@ -44,4 +45,11 @@ export const GITHUB_CONFIG: IOAuth2StrategyOptionWithRequest = {
   clientSecret: process.env.GITHUB_SECRET as string,
   callbackURL: githubURL,
   passReqToCallback: true
+}
+
+export const LOCAL_CONFIG: LocalIStrategyOptionWithRequest = {
+	usernameField: "username",
+	passwordField: "password",
+	session: true,
+	passReqToCallback: true
 }

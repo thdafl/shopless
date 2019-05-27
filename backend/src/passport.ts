@@ -5,14 +5,15 @@ import { Strategy as TwitterStrategy } from 'passport-twitter'
 import { OAuth2Strategy as GoogleStrategy, VerifyFunction } from 'passport-google-oauth'
 import { Strategy as FacebookStrategy } from 'passport-facebook'
 import { Strategy as GithubStrategy} from 'passport-github'
+import { Strategy as LocalStrategy, VerifyFunctionWithRequest as LocalVerifyFunctionWithRequest } from 'passport-local'
 
 import * as normalizeProfile from './util/normalizeProfile'
 
 import { 
-  TWITTER_CONFIG, GOOGLE_CONFIG, FACEBOOK_CONFIG, GITHUB_CONFIG
+  TWITTER_CONFIG, GOOGLE_CONFIG, FACEBOOK_CONFIG, GITHUB_CONFIG, LOCAL_CONFIG
 } from './config'
 import { getRepository } from 'typeorm';
-import { User } from './graphql/typeDefs';
+import { User, LocalUser } from './graphql/typeDefs';
 
 export default () => {  
 
@@ -40,9 +41,41 @@ export default () => {
       cb(null, user)
     }
 
+	const localCallback: LocalVerifyFunctionWithRequest =
+		async (req, username, password, cb) => {
+			const connection = await getRepository(LocalUser)
+			try {
+				const searchResult = (await connection.find({ where: { username: username } }))
+				if (searchResult.length > 0) {
+					const profile = searchResult[0]
+					const provider = 'local'
+					const verifyPassword = await profile.passwordValidation(password)
+					if (!verifyPassword) { return cb(null, false); }
+
+					const user = (
+						(await getRepository(User).findOne({ [`${provider}Id`]: profile.id })) ||
+						(await getRepository(User).save(
+							getRepository(User).create({
+								...normalizeProfile[provider](profile),
+								[`${provider}Id`]: profile.id,
+								// [provider]: profile
+							})))
+					)
+					req.query.state = "https://localhost:8080/login/callback"
+					cb(null, user)
+				}
+				else {
+					return cb(null, false);
+				}
+			} catch (err) {
+				return cb(err)
+			}
+		}
+
   // Adding each OAuth provider's strategy to passport
   // passport.use(new TwitterStrategy(TWITTER_CONFIG, callback('twitter')))
   passport.use(new GoogleStrategy(GOOGLE_CONFIG, callback))
   // passport.use(new FacebookStrategy(FACEBOOK_CONFIG, callback))
-  // passport.use(new GithubStrategy(GITHUB_CONFIG, callback))
+	// passport.use(new GithubStrategy(GITHUB_CONFIG, callback))
+	passport.use(new LocalStrategy(LOCAL_CONFIG, localCallback));
 }

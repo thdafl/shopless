@@ -16,6 +16,11 @@ export class User extends Base {
   // @ts-ignore
   photo?: string;
 
-  @Column()
-  googleId?: string;
+	@Column({ nullable: true })
+	// @ts-ignore
+	googleId?: string;
+	
+	@Column({ nullable: true })
+	// @ts-ignore
+	localId?: string;
 }

@@ -30,3 +30,10 @@ export const github = (user: GithubProfile) => (
     photo: user.photos ? user.photos[0].value : undefined
   }
 )
+
+export const local = (user: any) => (
+	{
+		name: user.username,
+		photo: ""
+	}
+)
