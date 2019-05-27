@@ -41,41 +41,41 @@ export default () => {
       cb(null, user)
     }
 
-	const localCallback: LocalVerifyFunctionWithRequest =
-		async (req, username, password, cb) => {
-			const connection = await getRepository(LocalUser)
-			try {
-				const searchResult = (await connection.find({ where: { username: username } }))
-				if (searchResult.length > 0) {
-					const profile = searchResult[0]
-					const provider = 'local'
-					const verifyPassword = await profile.passwordValidation(password)
-					if (!verifyPassword) { return cb(null, false); }
+  const localCallback: LocalVerifyFunctionWithRequest =
+    async (req, username, password, cb) => {
+      const connection = await getRepository(LocalUser)
+      try {
+        const searchResult = (await connection.find({ where: { username: username } }))
+        if (searchResult.length > 0) {
+          const profile = searchResult[0]
+          const provider = 'local'
+          const verifyPassword = await profile.passwordValidation(password)
+          if (!verifyPassword) { return cb(null, false); }
 
-					const user = (
-						(await getRepository(User).findOne({ [`${provider}Id`]: profile.id })) ||
-						(await getRepository(User).save(
-							getRepository(User).create({
-								...normalizeProfile[provider](profile),
-								[`${provider}Id`]: profile.id,
-								// [provider]: profile
-							})))
-					)
-					req.query.state = "https://localhost:8080/login/callback"
-					cb(null, user)
-				}
-				else {
-					return cb(null, false);
-				}
-			} catch (err) {
-				return cb(err)
-			}
-		}
+          const user = (
+            (await getRepository(User).findOne({ [`${provider}Id`]: profile.id })) ||
+            (await getRepository(User).save(
+              getRepository(User).create({
+                ...normalizeProfile[provider](profile),
+                [`${provider}Id`]: profile.id,
+                // [provider]: profile
+              })))
+          )
+          req.query.state = "https://localhost:8080/login/callback"
+          cb(null, user)
+        }
+        else {
+          return cb(null, false);
+        }
+      } catch (err) {
+        return cb(err)
+      }
+    }
 
   // Adding each OAuth provider's strategy to passport
   // passport.use(new TwitterStrategy(TWITTER_CONFIG, callback('twitter')))
   passport.use(new GoogleStrategy(GOOGLE_CONFIG, callback))
   // passport.use(new FacebookStrategy(FACEBOOK_CONFIG, callback))
-	// passport.use(new GithubStrategy(GITHUB_CONFIG, callback))
-	passport.use(new LocalStrategy(LOCAL_CONFIG, localCallback));
+  // passport.use(new GithubStrategy(GITHUB_CONFIG, callback))
+  passport.use(new LocalStrategy(LOCAL_CONFIG, localCallback));
 }

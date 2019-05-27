@@ -48,8 +48,8 @@ export const GITHUB_CONFIG: IOAuth2StrategyOptionWithRequest = {
 }
 
 export const LOCAL_CONFIG: LocalIStrategyOptionWithRequest = {
-	usernameField: "username",
-	passwordField: "password",
-	session: true,
-	passReqToCallback: true
+  usernameField: "username",
+  passwordField: "password",
+  session: true,
+  passReqToCallback: true
 }

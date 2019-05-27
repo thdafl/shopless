@@ -28,12 +28,12 @@ export const success = (req: Request, res: Response, next: NextFunction) => {
     } else {
       res.cookie('shopless-token', token)
       try {
-				if (req.user.localId) {
-					res.json({
-						message: "Success",
-						success: true
-					})
-				} else {
+        if (req.user.localId) {
+          res.json({
+            message: "Success",
+            success: true
+          })
+        } else {
         const {state} = req.query
         const {returnTo} = JSON.parse(Buffer.from(state, 'base64').toString())
         if (typeof returnTo === 'string' && returnTo.startsWith('http')) {
@@ -41,7 +41,7 @@ export const success = (req: Request, res: Response, next: NextFunction) => {
           returnUrl.searchParams.append('token', token)
           res.redirect(returnUrl.href)
         }
-    }
+        }
       } catch {
         // TODO: return a refresh token also
         if (req.session) {

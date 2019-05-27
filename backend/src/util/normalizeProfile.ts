@@ -32,8 +32,8 @@ export const github = (user: GithubProfile) => (
 )
 
 export const local = (user: any) => (
-	{
-		name: user.username,
-		photo: ""
-	}
+  {
+    name: user.username,
+    photo: ""
+  }
 )
