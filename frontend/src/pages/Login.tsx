@@ -11,9 +11,10 @@ import OAuth from '../OAuth'
 const providers = ['google'/*, 'twitter', 'facebook', 'github'*/]
 
 const LoginComponent = () => {
-	const [username, setUsername] = React.useState("")
-	const [password, setPassword] = React.useState("")
-	const [toggleLogin, setToggleLogin] = React.useState(true)
+  const [username, setUsername] = React.useState("")
+  const [name, setName] = React.useState("")
+  const [password, setPassword] = React.useState("")
+  const [toggleLogin, setToggleLogin] = React.useState(true)
 
   const loginFunction = (username: string, password: string): void => {
     try {
@@ -27,10 +28,11 @@ const LoginComponent = () => {
     }
   }
 
-  const registerFunction = (username: string, password: string): void => {
+  const registerFunction = (username: string, name: string, password: string): void => {
     try {
       instance.post('/local/register', {
         username,
+        name,
         password
       })
         .then(res => alert(res.data.message))
@@ -60,18 +62,29 @@ const LoginComponent = () => {
           <form
             onSubmit={(e) => { loginFunction(username, password); e.preventDefault() }}
           >
+            <div>username
             <input onChange={e => setUsername(e.target.value)} value={username} />
+            </div>
+            <div>password
             <input onChange={e => setPassword(e.target.value)} value={password} />
+            </div>
             <button type='submit'>Login</button>
           </form>
         )
         :
         (
           <form
-            onSubmit={(e) => { registerFunction(username, password); e.preventDefault() }}
+            onSubmit={(e) => { registerFunction(username, name, password); e.preventDefault() }}
           >
+            <div>username
             <input onChange={e => setUsername(e.target.value)} value={username} />
+            </div>
+            <div>name
+            <input onChange={e => setName(e.target.value)} value={name} />
+            </div>
+            <div>password
             <input onChange={e => setPassword(e.target.value)} value={password} />
+            </div>
             <button type='submit'>Register</button>
           </form>
         )

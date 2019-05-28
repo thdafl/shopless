@@ -4,7 +4,7 @@ import passport from 'passport'
 import { getConnection } from "typeorm";
 
 import * as auth from '../controllers/auth'
-import { LocalUser } from '../graphql/typeDefs'
+import { User } from '../graphql/typeDefs'
 
 const router = express.Router()
 
@@ -17,13 +17,15 @@ const authWith: (passport: (config: Partial<passport.AuthenticateOptions>) => an
   }
 
 const localRegister = async (req: express.Request, res: express.Response) => {
-  const connection = await getConnection().getRepository(LocalUser)
+  const connection = await getConnection().getRepository(User)
 
-  const localUser = new LocalUser();
-  localUser.username = req.body.username;
-  localUser.password = req.body.password;
+  const user = new User();
+  user.username = req.body.username;
+  user.name = req.body.name;
+  await user.hashing(req.body.password);
+
   try {
-    const result = await connection.insert(localUser)
+    const result = await connection.insert(user)
     if (!!result) {
       res.json({
         message: "Success",
@@ -36,6 +38,27 @@ const localRegister = async (req: express.Request, res: express.Response) => {
       success: false
     })
   }
+}
+
+const localLogin = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  passport.authenticate('local', (error, user, info) => {
+    if (!!user) {
+      next()
+    }
+    if (error) {
+      res.json({
+        message: error,
+        success: false
+      })
+    }
+    if (!!info) {
+      res.json({
+        message: info.message,
+        success: false
+      })
+    }
+  }
+  )(req, res, next)
 }
 
 // Passport middlewares
@@ -69,7 +92,7 @@ router.get('/verify', auth.required)
 // Routes that are triggered on the client
 router.get('/google', authWith(googlePassport))
 
-router.post('/local/login', authWith(localPassport), auth.success)
+router.post('/local/login', localLogin, auth.success)
 router.post('/local/register', localRegister)
 
 export default router

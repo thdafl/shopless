@@ -28,7 +28,7 @@ export const success = (req: Request, res: Response, next: NextFunction) => {
     } else {
       res.cookie('shopless-token', token)
       try {
-        if (req.user.localId) {
+        if (req.user.username) {
           res.json({
             message: "Success",
             success: true

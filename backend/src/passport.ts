@@ -13,7 +13,7 @@ import {
   TWITTER_CONFIG, GOOGLE_CONFIG, FACEBOOK_CONFIG, GITHUB_CONFIG, LOCAL_CONFIG
 } from './config'
 import { getRepository } from 'typeorm';
-import { User, LocalUser } from './graphql/typeDefs';
+import { User } from './graphql/typeDefs';
 
 export default () => {  
 
@@ -43,29 +43,20 @@ export default () => {
 
   const localCallback: LocalVerifyFunctionWithRequest =
     async (req, username, password, cb) => {
-      const connection = await getRepository(LocalUser)
+      const connection = await getRepository(User)
       try {
         const searchResult = (await connection.find({ where: { username: username } }))
         if (searchResult.length > 0) {
-          const profile = searchResult[0]
-          const provider = 'local'
-          const verifyPassword = await profile.passwordValidation(password)
-          if (!verifyPassword) { return cb(null, false); }
-
-          const user = (
-            (await getRepository(User).findOne({ [`${provider}Id`]: profile.id })) ||
-            (await getRepository(User).save(
-              getRepository(User).create({
-                ...normalizeProfile[provider](profile),
-                [`${provider}Id`]: profile.id,
-                // [provider]: profile
-              })))
-          )
+          const user = searchResult[0]
+          const verifyPassword = await user.passwordValidation(password)
+          if (!verifyPassword) {
+            return cb(null, false, { message: 'Incorrect Password' });
+          }
           req.query.state = "https://localhost:8080/login/callback"
           cb(null, user)
         }
         else {
-          return cb(null, false);
+          return cb(null, false, { message: 'No User Found' });
         }
       } catch (err) {
         return cb(err)
